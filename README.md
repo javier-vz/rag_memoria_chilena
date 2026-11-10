@@ -1,38 +1,39 @@
-# Explorador de Memoria Chilena
+# Buscador de fuentes históricas
 
-Una herramienta de consulta documental desarrollada por interés en la exploración de fuentes históricas. **No está afiliada a Memoria Chilena ni representa a la Biblioteca Nacional de Chile.** Los datos bibliográficos se enlazan a sus fichas originales.
+Aplicación en Streamlit para consultar **una selección de 34 fichas documentales** publicadas en el portal [Memoria Chilena](https://www.memoriachilena.gob.cl/602/w3-channel.html). Permite buscar por títulos, temas o autores y abrir los registros originales. **No es el portal Memoria Chilena ni una aplicación de la Biblioteca Nacional de Chile.**
 
-## Funciones
+## Qué hace
 
-- Interfaz sobria y legible, con **tres pestañas horizontales**: Consultar, Colección y Acerca de.
-- Modo **Rápida** (predeterminado) para mostrar fichas sin llamar a Groq.
-- Opción **Con Qwen** para redactar respuestas basadas únicamente en los metadatos recuperados.
-- Búsqueda léxica TF-IDF, relaciones RDF y búsqueda semántica MiniLM opcional. La primera descarga del modelo MiniLM puede tardar; para consultas inmediatas, deja desactivada esa opción.
-- Selección de 34 fichas de cuatro colecciones, con enlaces al sitio fuente. **No incluye el contenido íntegro de las obras.**
-- Citas sometidas a comprobaciones formales de identificador y fragmentos catalográficos; esto no verifica cada afirmación histórica.
+- Recuperación por palabras clave y títulos (TF-IDF) y relaciones RDF específicas del catálogo.
+- Búsqueda semántica con MiniLM multilingüe, opcional; la primera carga puede demorar.
+- Dos modos de respuesta: **Rápida**, sin llamadas a modelos de generación; y **Con Qwen**, que redacta una síntesis breve de metadatos utilizando Groq.
+- Citas con identificadores y enlaces a las fichas originales. Validación formal de evidencias catalográficas; **no se afirma haber leído las obras completas**.
+- Interfaz adaptada a escritorio y celular, con pestañas, botones de alto contraste y fichas desplegables.
 
-## Publicar en GitHub y Streamlit Cloud
+Los metadatos históricos pueden contener errores o variantes, y compartir una categoría no demuestra que las obras tengan igual contenido, género o postura. La aplicación sirve para **descubrir fuentes**, no para validar interpretaciones históricas.
 
-1. Descomprime el ZIP y sube el **contenido** de `memoria-chilena-streamlit-v3/` a tu repositorio de GitHub, dejando `app.py` en la raíz.
-2. Ve a [Streamlit Community Cloud](https://share.streamlit.io/) y selecciona el repositorio, la rama y `app.py`.
-3. En **App settings → Secrets**, añade:
+## Publicar en GitHub y Streamlit Community Cloud
+
+1. Descomprime el proyecto y sube el **contenido** de su carpeta a GitHub, con `app.py` en la raíz.
+2. En [Streamlit Community Cloud](https://share.streamlit.io/) selecciona el repositorio, la rama principal y el archivo `app.py`.
+3. En **App settings → Secrets** guarda la clave de Groq:
 
    ```toml
    GROQ_API_KEY = "tu_clave"
    ```
 
-4. Guarda los secretos y reinicia la app si es necesario. La clave no se incluye en GitHub.
+4. Guarda los cambios y reinicia la app si la versión anterior continúa visible.
 
-No subas `.streamlit/secrets.toml`, archivos `.env`, PDF ni exportaciones de trabajo. El `.gitignore` los excluye. `.streamlit/secrets.toml.example` es una plantilla sin credenciales.
+No subas la clave a GitHub. `.streamlit/secrets.toml` está excluido mediante `.gitignore`. El archivo `secrets.toml.example` es solo un ejemplo sin credenciales.
 
-## Ejecutar localmente
+## Ejecución local
 
 ```bash
 python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Para Qwen en local, define `GROQ_API_KEY` como variable de entorno o crea `.streamlit/secrets.toml` (archivo excluido de Git).
+Para usar Qwen en local, define la variable de entorno `GROQ_API_KEY` o crea `.streamlit/secrets.toml` en tu ordenador (sin versionarlo).
 
 ## Estructura
 
@@ -54,12 +55,16 @@ README.md
 .gitignore
 ```
 
-## Alcance del corpus
+## Alcance y limitaciones
 
-Esta versión contiene **34 fichas catalográficas** y **23 relaciones específicas** de Memoria Chilena. Se trabaja con metadatos, no con documentos digitalizados completos. Las materias y asociaciones curatoriales no prueban por sí mismas hechos históricos; las fechas no siempre son fechas de publicación. Verifica cada afirmación de interés en la ficha y en el documento original cuando esté disponible.
+El índice contiene **34 fichas** y **23 conexiones RDF específicas**. Los embeddings de los documentos están precalculados. La app no redistribuye los documentos PDF y no necesita un servidor RDF.
+
+Cuando se activa Qwen, se envían a Groq la consulta y los campos catalográficos recuperados. Las evidencias se verifican contra los campos de la ficha: el proceso **no valida por sí solo la veracidad de las interpretaciones de una obra**. Si falla el servicio o el control de citas, se presenta una orientación no generativa, basada en el catálogo.
 
 ## Pruebas
 
 ```bash
-python -m unittest discover -s tests -v
+PYTHONPATH=. pytest -q tests
 ```
+
+Si trabajas con Windows, ejecuta `python -m unittest discover -s tests` desde la raíz o configura `PYTHONPATH` para que Python encuentre el paquete `core`.

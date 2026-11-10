@@ -43,7 +43,7 @@ class TestApp(unittest.TestCase):
     def test_generation(self):
         hits=self.searcher.search('El voto femenino',encoder=FakeEncoder(),top_k=4)
         a=answer_with_groq('El voto femenino',hits,'test-secret',client=FakeGroq())
-        self.assertEqual(a.status,'control_formal')
+        self.assertEqual(a.status,'formato_anterior')
         self.assertIn('[MC',a.text)
     def test_reject_fake_id(self):
         hits=self.searcher.search('El voto femenino',encoder=None,top_k=3)
