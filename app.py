@@ -61,22 +61,64 @@ button[role="tab"][aria-selected="true"], [data-testid="stTabs"] button[aria-sel
 [data-testid="stVerticalBlockBorderWrapper"] {border-color:#71859A!important;}
 [data-testid="stCaptionContainer"] {color:#344963!important;}
 .mc-answer-note {font-size:.84rem;color:#35465B;margin-top:.6rem;}
-/* Bloques compactos; el espaciado en móvil tiene prioridad. */
+/* Solo móvil: controles grandes, contenido compacto y pestañas sin scroll lateral. */
 @media (max-width: 760px) {
- section.main > div.block-container {padding-top:1rem!important;padding-left:.85rem!important;padding-right:.85rem!important;}
- [data-baseweb="tab-list"] {gap:3px;padding:4px!important;border-radius:8px;}
- button[role="tab"] {padding:.65rem .85rem!important;font-size:.91rem!important;}
- [data-testid="stForm"] {padding:.72rem!important;}
- .mc-hero {padding:1rem 1.05rem;}
- .mc-hero strong {font-size:1.07rem;}
- .mc-hero p {font-size:.92rem;}
- .mc-meta {font-size:.85rem;}
- [data-testid="stHorizontalBlock"] {flex-wrap:wrap!important;gap:.5rem!important;}
- [data-testid="column"] {min-width:100%!important; width:100%!important;flex:1 1 100%!important;}
- h1 {font-size:1.85rem!important;}
- h2 {font-size:1.22rem!important;}
- .mc-intro {font-size:.98rem;}
- .mc-meta {font-size:.86rem;}
+ section.main > div.block-container {
+   padding: .8rem .85rem 1.8rem!important;
+   max-width:100%!important;
+ }
+ h1 {font-size:1.75rem!important;line-height:1.18!important;margin-bottom:.45rem!important;}
+ h2 {font-size:1.19rem!important;}
+ h3 {font-size:1.1rem!important;}
+ p, li {line-height:1.45!important;}
+ .mc-label {font-size:.7rem!important;margin-bottom:.4rem!important;letter-spacing:.075em;}
+ .mc-hero {margin:.65rem 0 .65rem!important;padding:.85rem .95rem!important;border-top-width:5px!important;border-radius:0 0 9px 9px!important;}
+ .mc-hero strong {font-size:1.04rem!important;line-height:1.28!important;margin-bottom:.35rem!important;}
+ .mc-hero p {font-size:.88rem!important;line-height:1.44!important;margin:0 0 .5rem!important;}
+ .mc-hero a {font-size:.89rem!important;}
+ .mc-meta {font-size:.81rem!important;line-height:1.38!important;margin:.6rem 0 .85rem!important;padding:.56rem .72rem!important;border-left-width:4px!important;}
+ /* Las tres pestañas quedan siempre visibles y se pueden pulsar con un dedo. */
+ [data-testid="stTabs"] [data-baseweb="tab-list"] {
+   display:flex!important;justify-content:space-between!important;
+   width:100%!important;max-width:100%!important;
+   flex-wrap:nowrap!important;overflow-x:visible!important;
+   gap:3px!important;padding:4px!important;margin-bottom:.7rem!important;
+   border-radius:8px!important;box-sizing:border-box!important;
+ }
+ [data-testid="stTabs"] button[role="tab"] {
+   min-width:0!important;flex:1 1 0!important;
+   min-height:46px!important;max-width:none!important;
+   padding:.55rem .15rem!important;
+   font-size:.86rem!important;line-height:1.2!important;
+   white-space:nowrap!important;text-align:center!important;
+   justify-content:center!important;
+ }
+ [data-testid="stTabs"] [data-baseweb="tab-panel"] {min-width:0!important;}
+ /* Formulario principal y modo de respuesta. */
+ [data-testid="stForm"] {padding:.72rem!important;border-radius:9px!important;}
+ [data-testid="stTextInput"] input {font-size:16px!important;min-height:48px!important;width:100%!important;}
+ .stFormSubmitButton button[kind="primary"] {min-height:50px!important;width:100%!important;}
+ [data-testid="stRadio"] [role="radiogroup"] {display:flex!important;gap:.8rem!important;flex-wrap:wrap!important;}
+ [data-testid="stRadio"] label {min-height:40px!important;align-items:center!important;}
+ /* Dos columnas en escritorio, una en móvil; textos largos no desbordan. */
+ [data-testid="stHorizontalBlock"] {flex-wrap:wrap!important;gap:.4rem!important;}
+ [data-testid="column"] {min-width:100%!important;width:100%!important;flex:1 1 100%!important;}
+ [data-testid="stButton"] button,
+ .stButton button[kind="secondary"] {min-height:48px!important;width:100%!important;white-space:normal!important;line-height:1.25!important;padding:.58rem .75rem!important;}
+ [data-testid="stExpander"] {overflow:hidden!important;border-radius:8px!important;}
+ [data-testid="stExpander"] summary {min-height:46px!important;}
+ [data-testid="stVerticalBlockBorderWrapper"] {min-width:0!important;}
+ [data-testid="stMarkdownContainer"], [data-testid="stCaptionContainer"] {
+   overflow-wrap:anywhere!important;word-break:normal!important;
+ }
+ [data-testid="stMarkdownContainer"] a {overflow-wrap:anywhere!important;}
+}
+/* En teléfonos muy estrechos, mantener legible el nombre de cada pestaña. */
+@media (max-width: 360px) {
+ section.main > div.block-container {padding-left:.65rem!important;padding-right:.65rem!important;}
+ [data-testid="stTabs"] button[role="tab"] {font-size:.8rem!important;padding:.52rem .08rem!important;}
+ .mc-hero {padding:.75rem .8rem!important;}
+ .mc-hero p {font-size:.85rem!important;}
 }
 </style>""", unsafe_allow_html=True)
 
@@ -202,12 +244,16 @@ with buscar_tab:
         enviar = st.form_submit_button("Buscar fuentes", type="primary", use_container_width=True)
 
     st.markdown("**Consultas sugeridas**")
+    # Mantener el orden de lectura al apilar las columnas en el celular.
     col1, col2 = st.columns(2, gap="small")
     with col1:
         b1 = st.button("Sufragio femenino", key="ej_suf", use_container_width=True)
-        b3 = st.button("Lenguas indígenas andinas", key="ej_and", use_container_width=True)
     with col2:
         b2 = st.button("Instituto Nacional", key="ej_ins", use_container_width=True)
+    col3, col4 = st.columns(2, gap="small")
+    with col3:
+        b3 = st.button("Lenguas indígenas andinas", key="ej_and", use_container_width=True)
+    with col4:
         b4 = st.button("Centenario de 1910", key="ej_cen", use_container_width=True)
 
     with st.expander("Opciones de búsqueda"):
