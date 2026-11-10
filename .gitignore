@@ -1,0 +1,19 @@
+# Credenciales
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+# Datos de trabajo que no publicamos
+notebooks/
+data/pdf/
+data/output/
+*.zip
+*.pdf
+# Entorno
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
