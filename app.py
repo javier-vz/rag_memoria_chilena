@@ -1,4 +1,4 @@
-"""Buscador de fuentes históricas: interfaz Streamlit para fichas documentales."""
+"""GraphRAG de Memoria Chilena: recuperación híbrida y respuestas con fuentes."""
 from __future__ import annotations
 
 import os
@@ -10,8 +10,8 @@ from core.retrieval import CatalogSearch, MODEL_ID, label_fecha
 
 
 st.set_page_config(
-    page_title="Buscador de fuentes históricas",
-    page_icon="📖",
+    page_title="GraphRAG de Memoria Chilena",
+    page_icon="📚",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -32,21 +32,32 @@ a:hover {color:#AD3B00!important;}
 .mc-label {font-size:.78rem;letter-spacing:.11em;font-weight:800;color:#18335A;text-transform:uppercase;margin-bottom:8px;}
 .mc-intro {font-size:1.04rem;line-height:1.6;color:#263B57;max-width:780px;margin:.45rem 0 1rem;}
 .mc-meta {border-left:4px solid var(--orange);padding:.5rem .8rem;background:#FFFFFF;color:#34455A;font-size:.91rem;font-weight:500;margin:1rem 0 1.4rem;}
+/* Franja azul marino y naranja real: sin fondos pastel */
+.mc-hero { background:#071A33; color:#FFFFFF; border-top:7px solid #FF8200; padding:1.35rem 1.6rem 1.4rem; border-radius:0 0 12px 12px; margin:1rem 0 .85rem; }
+.mc-hero strong { display:block; color:#FFFFFF; font-size:1.22rem; font-weight:800; margin-bottom:.4rem; }
+.mc-hero p { color:#FFFFFF; line-height:1.55; font-size:1rem; margin:0 0 .65rem; }
+.mc-hero a { color:#FFB000!important; font-weight:800; text-decoration:underline; }
+.mc-meta { border-left:6px solid #FF8200; background:#071A33!important; color:#FFFFFF!important; border-radius:5px; padding:.8rem 1rem; font-weight:680; }
+.mc-meta strong { color:#FFFFFF; }
+.mc-label { color:#0B1E3B!important; font-size:.82rem; }
 /* Navegación inequívoca, con relleno sólido. */
 [data-baseweb="tab-list"] {display:flex; gap:5px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; background:var(--navy)!important; padding:7px!important; border:1px solid var(--navy); border-radius:11px; margin-bottom:1rem;}
 button[role="tab"] {background:transparent!important; color:#FFFFFF!important; font-weight:700!important; border-radius:7px!important; padding:.64rem 1.25rem!important; min-height:44px!important; flex-shrink:0;}
-button[role="tab"]:hover {background:#1E477C!important; color:white!important;}
-button[role="tab"][aria-selected="true"] {background:var(--orange)!important; color:#111C32!important; box-shadow:0 2px 0 #00000030!important;}
+button[role="tab"]:hover {background:#0057DA!important; color:white!important;}
+button[role="tab"][aria-selected="true"], [data-testid="stTabs"] button[aria-selected="true"] {background:#FF8200!important; color:#071A33!important; box-shadow:none!important; font-weight:850!important;}
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"] {display:none!important;}
+[data-testid="stTabs"] [data-baseweb="tab-list"] {background:#071A33!important; border-radius:9px!important; padding:6px!important;}
+[data-testid="stTabs"] button[role="tab"] { color:#FFFFFF!important; background:#071A33!important; border-radius:6px!important; }
+[data-testid="stTabs"] button[role="tab"][aria-selected="true"] { background:#FF8200!important; color:#071A33!important; border:0!important; }
 /* Controles legibles de alto contraste. */
-.stFormSubmitButton button[kind="primary"], .stButton button[kind="primary"] {background:var(--blue)!important;border:2px solid var(--blue)!important;color:white!important;font-weight:750!important;border-radius:8px!important;min-height:47px!important;}
-.stFormSubmitButton button[kind="primary"]:hover, .stButton button[kind="primary"]:hover {background:#0C327F!important;border-color:#0C327F!important;}
+.stFormSubmitButton button[kind="primary"], .stButton button[kind="primary"] {background:#FF8200!important;border:2px solid #FF8200!important;color:#071A33!important;font-weight:750!important;border-radius:8px!important;min-height:47px!important;}
+.stFormSubmitButton button[kind="primary"]:hover, .stButton button[kind="primary"]:hover {background:#FFB000!important;border-color:#FFB000!important;}
 .stButton button[kind="secondary"] {background:white!important; color:var(--navy)!important; border:1.7px solid #3E567A!important; border-radius:8px!important; min-height:46px!important; font-weight:600!important;}
-.stButton button[kind="secondary"]:hover {background:var(--navy)!important; color:white!important;border-color:var(--navy)!important;}
+.stButton button[kind="secondary"]:hover {background:#0B1E3B!important; color:#FFFFFF!important;border-color:#0B1E3B!important;}
 .stButton button:focus-visible,button[role="tab"]:focus-visible,input:focus-visible,textarea:focus-visible {outline:3px solid var(--orange)!important;outline-offset:2px!important;}
-[data-testid="stForm"] {background:#FFFFFF!important; border:1.6px solid #6F859D!important; border-radius:11px!important; padding:1.05rem 1.1rem!important;}
-[data-testid="stTextInput"] input {font-size:16px!important;min-height:44px!important; border-color:#677D95!important;}
-[data-testid="stExpander"] {border:1.5px solid #607894!important;border-radius:9px!important;background:#FFFFFF!important;}
+[data-testid="stForm"] {background:#FFFFFF!important; border:2px solid #0B1E3B!important; border-radius:11px!important; padding:1.05rem 1.1rem!important;}
+[data-testid="stTextInput"] input {font-size:16px!important;min-height:44px!important; border-color:#0B1E3B!important;}
+[data-testid="stExpander"] {border:2px solid #0B1E3B!important;border-radius:9px!important;background:#FFFFFF!important;}
 [data-testid="stVerticalBlockBorderWrapper"] {border-color:#71859A!important;}
 [data-testid="stCaptionContainer"] {color:#344963!important;}
 .mc-answer-note {font-size:.84rem;color:#35465B;margin-top:.6rem;}
@@ -56,6 +67,10 @@ button[role="tab"][aria-selected="true"] {background:var(--orange)!important; co
  [data-baseweb="tab-list"] {gap:3px;padding:4px!important;border-radius:8px;}
  button[role="tab"] {padding:.65rem .85rem!important;font-size:.91rem!important;}
  [data-testid="stForm"] {padding:.72rem!important;}
+ .mc-hero {padding:1rem 1.05rem;}
+ .mc-hero strong {font-size:1.07rem;}
+ .mc-hero p {font-size:.92rem;}
+ .mc-meta {font-size:.85rem;}
  [data-testid="stHorizontalBlock"] {flex-wrap:wrap!important;gap:.5rem!important;}
  [data-testid="column"] {min-width:100%!important; width:100%!important;flex:1 1 100%!important;}
  h1 {font-size:1.85rem!important;}
@@ -153,16 +168,20 @@ def mostrar_resultado(result: dict) -> None:
     mostrar_fuentes(result["hits"])
 
 
-st.markdown("<div class='mc-label'>Historia de Chile · Fuentes documentales</div>", unsafe_allow_html=True)
-st.title("Buscador de fuentes históricas")
+st.markdown("<div class='mc-label'>GraphRAG · Patrimonio documental chileno</div>", unsafe_allow_html=True)
+st.title("GraphRAG de Memoria Chilena")
 st.markdown(
-    "<p class='mc-intro'>Busca obras, temas y autores en una selección de fichas documentales. "
-    "Puedes leer una orientación breve y abrir cada fuente original.</p>",
-    unsafe_allow_html=True,
+    "<div class='mc-hero'>"
+    "<strong>Explora las fuentes del portal Memoria Chilena</strong>"
+    "<p>Construimos un buscador sobre 34 fichas documentales del portal Memoria Chilena. "
+    "Combina palabras clave (TF-IDF), embeddings MiniLM y relaciones RDF; "
+    "Qwen, mediante Groq, puede redactar respuestas con citas a las fichas originales.</p>"
+    "<a href='https://www.memoriachilena.gob.cl/602/w3-channel.html' target='_blank' rel='noopener noreferrer'>Ver portal Memoria Chilena ↗</a>"
+    "</div>", unsafe_allow_html=True,
 )
 st.markdown(
-    f"<div class='mc-meta'>{catalogo().N} fichas seleccionadas · "
-    "Procedencia: portal Memoria Chilena · Esta herramienta no es el portal original</div>",
+    f"<div class='mc-meta'><strong>{catalogo().N} fichas documentales</strong> · "
+    "4 colecciones temáticas · 23 conexiones RDF específicas</div>",
     unsafe_allow_html=True,
 )
 
@@ -245,7 +264,7 @@ with buscar_tab:
         mostrar_resultado(r)
 
 with coleccion_tab:
-    st.markdown("### Fichas de la muestra")
+    st.markdown("### Fichas del portal Memoria Chilena")
     corpus = catalogo().docs.copy()
     st.caption(f"{len(corpus)} registros disponibles. No representan la totalidad de Memoria Chilena.")
     c1, c2 = st.columns([1, 1.5])
@@ -265,8 +284,8 @@ with coleccion_tab:
 
 with acerca_tab:
     st.markdown("### Sobre esta herramienta")
-    st.write("Este buscador reúne una muestra de fichas históricas para experimentar con recuperación de información. No es una interfaz del portal Memoria Chilena ni está afiliado a la Biblioteca Nacional de Chile.")
-    st.write("La recuperación combina coincidencias de palabras y títulos, relaciones catalográficas RDF y, cuando se activa, embeddings MiniLM. La respuesta con Qwen se genera mediante la API de Groq y utiliza únicamente los metadatos recuperados.")
+    st.write("Este GraphRAG trabaja con una selección de 34 fichas obtenidas del portal Memoria Chilena. Su objetivo es recuperar documentos por tema, título y autor, y facilitar el acceso a los registros originales.")
+    st.write("La recuperación combina TF-IDF de palabras y caracteres, embeddings MiniLM multilingües y 23 relaciones RDF curatoriales específicas. Qwen (Groq) redacta respuestas a partir de los campos de las fichas recuperadas, con controles formales de citas.")
     st.markdown("**Alcance de los resultados**")
     st.write("Se indexan fichas, no las obras digitalizadas completas. Una relación temática no implica acuerdo entre documentos, ni autoriza afirmaciones sobre sus contenidos. Las fechas de catálogo no son necesariamente fechas de publicación.")
     st.markdown("**Fuente de los datos**")
@@ -274,4 +293,4 @@ with acerca_tab:
     st.write("Las consultas realizadas con Qwen se envían a Groq. Evita ingresar datos personales sensibles.")
 
 st.divider()
-st.caption("Buscador de fuentes históricas · Selección documental con enlaces a los registros originales")
+st.caption("GraphRAG de Memoria Chilena · 34 fichas del portal · TF-IDF + MiniLM + RDF + Qwen/Groq")

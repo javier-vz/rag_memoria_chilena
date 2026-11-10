@@ -1,6 +1,6 @@
-# Buscador de fuentes históricas
+# GraphRAG de Memoria Chilena
 
-Aplicación en Streamlit para consultar **una selección de 34 fichas documentales** publicadas en el portal [Memoria Chilena](https://www.memoriachilena.gob.cl/602/w3-channel.html). Permite buscar por títulos, temas o autores y abrir los registros originales. **No es el portal Memoria Chilena ni una aplicación de la Biblioteca Nacional de Chile.**
+Buscador GraphRAG construido sobre **34 fichas documentales del portal [Memoria Chilena](https://www.memoriachilena.gob.cl/602/w3-channel.html)**. Combina TF-IDF, MiniLM multilingüe y relaciones RDF curatoriales para recuperar fichas. Qwen (Groq) puede redactar una orientación breve con referencias a los registros originales.
 
 ## Qué hace
 
