@@ -1,79 +1,65 @@
-# Memoria Chilena — explorador documental
+# Explorador de Memoria Chilena
 
-Aplicación de investigación **independiente** construida con Streamlit. Consulta un corpus piloto de **34 fichas** de [Memoria Chilena](https://www.memoriachilena.gob.cl/602/w3-channel.html) (Biblioteca Nacional de Chile).
+Una herramienta de consulta documental desarrollada por interés en la exploración de fuentes históricas. **No está afiliada a Memoria Chilena ni representa a la Biblioteca Nacional de Chile.** Los datos bibliográficos se enlazan a sus fichas originales.
 
-La interfaz es deliberadamente sobria: una pregunta, una respuesta orientativa y enlaces a las fichas de origen. El sistema **no transcribe ni verifica el contenido íntegro** de los libros.
+## Funciones
 
-## Características
+- Interfaz sobria y legible, con **tres pestañas horizontales**: Consultar, Colección y Acerca de.
+- Modo **Rápida** (predeterminado) para mostrar fichas sin llamar a Groq.
+- Opción **Con Qwen** para redactar respuestas basadas únicamente en los metadatos recuperados.
+- Búsqueda léxica TF-IDF, relaciones RDF y búsqueda semántica MiniLM opcional. La primera descarga del modelo MiniLM puede tardar; para consultas inmediatas, deja desactivada esa opción.
+- Selección de 34 fichas de cuatro colecciones, con enlaces al sitio fuente. **No incluye el contenido íntegro de las obras.**
+- Citas sometidas a comprobaciones formales de identificador y fragmentos catalográficos; esto no verifica cada afirmación histórica.
 
-- Recuperación por coincidencias de palabras y caracteres (TF-IDF).
-- Embeddings precomputados de los 34 registros y codificación de la pregunta con `paraphrase-multilingual-MiniLM-L12-v2`.
-- Reordenamiento por coincidencias de título y expansión muy moderada de **23 relaciones catalográficas específicas**; no se tratan como hechos históricos.
-- Respuestas breves mediante **Qwen 3.8 27B en Groq**, con comprobación formal de IDs y fragmentos literales de metadatos.
-- Modo **sin Groq**: muestra fuentes recuperadas y una descripción conservadora.
-- La primera carga del modelo de embeddings descarga archivos desde Hugging Face. Si no está disponible, la búsqueda cae a TF-IDF.
+## Publicar en GitHub y Streamlit Cloud
 
-## Publicar en GitHub
-
-1. Crea un repositorio nuevo (p. ej. `memoria-chilena-rag`).
-2. Sube **el contenido de esta carpeta**, dejando `app.py` en la raíz.
-3. No subas `secrets.toml`, PDFs, archivos `etapa*.zip` ni carpetas de trabajo de Jupyter.
-4. Publica el proyecto en [Streamlit Community Cloud](https://share.streamlit.io/) usando `app.py` como punto de entrada.
-5. En **App settings → Secrets**, pega:
+1. Descomprime el ZIP y sube el **contenido** de `memoria-chilena-streamlit-v3/` a tu repositorio de GitHub, dejando `app.py` en la raíz.
+2. Ve a [Streamlit Community Cloud](https://share.streamlit.io/) y selecciona el repositorio, la rama y `app.py`.
+3. En **App settings → Secrets**, añade:
 
    ```toml
-   GROQ_API_KEY = "tu_clave_real"
+   GROQ_API_KEY = "tu_clave"
    ```
 
-   Esta clave **NO** se agrega a GitHub. El archivo `.streamlit/secrets.toml.example` es solo un ejemplo sin credenciales.
+4. Guarda los secretos y reinicia la app si es necesario. La clave no se incluye en GitHub.
 
-## Ejecución local
+No subas `.streamlit/secrets.toml`, archivos `.env`, PDF ni exportaciones de trabajo. El `.gitignore` los excluye. `.streamlit/secrets.toml.example` es una plantilla sin credenciales.
 
-En la raíz del proyecto:
+## Ejecutar localmente
 
 ```bash
 python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Para usar Groq localmente, crea `.streamlit/secrets.toml` con la configuración anterior (el archivo está excluido por `.gitignore`). Si no tienes clave, la aplicación sigue funcionando como catálogo.
+Para Qwen en local, define `GROQ_API_KEY` como variable de entorno o crea `.streamlit/secrets.toml` (archivo excluido de Git).
 
-## Contenido del proyecto
+## Estructura
 
-```
+```text
 app.py
 core/
-    retrieval.py
-    generation.py
+  retrieval.py
+  generation.py
 data/
-    catalogo.csv
-    relaciones.csv
-    embeddings.npz
+  catalogo.csv
+  relaciones.csv
+  embeddings.npz
 .streamlit/
-    config.toml
-    secrets.toml.example
+  config.toml
+  secrets.toml.example
 requirements.txt
+tests/
 README.md
 .gitignore
-tests/
 ```
 
-## Procedencia, límites y derechos
+## Alcance del corpus
 
-Las fuentes bibliográficas pertenecen al catálogo de Memoria Chilena. Se incluyen **metadatos, enlaces y vectores derivados**, no libros completos ni PDF. Los derechos de los objetos digitales y de cada obra deben consultarse en sus fichas originales. La presencia de una ficha en un minisitio indica una relación curatorial, no necesariamente una afirmación histórica sobre la obra.
-
-Los embeddings se generaron durante la etapa 15 (modelo MiniLM de 384 dimensiones). El corpus tiene 34 fichas de cuatro ámbitos: religiosidad andina, sufragio femenino, formación de la nación y centenario de 1910. Es un **corpus piloto**, no una réplica de todo el portal.
-
-Las citas automáticas validan que existe la ficha y que el fragmento procede de sus metadatos, **no** que el contenido histórico de un libro confirme la respuesta. La fecha catalográfica registrada no siempre es fecha de publicación; la aplicación evita dar ese salto.
-
-Consultas procesadas por Qwen se envían al servicio Groq. Revisa los límites y el uso de API antes de hacer pública la aplicación. Para una implementación pública con alto tráfico, incorpora controles adicionales de cuota y abuso.
+Esta versión contiene **34 fichas catalográficas** y **23 relaciones específicas** de Memoria Chilena. Se trabaja con metadatos, no con documentos digitalizados completos. Las materias y asociaciones curatoriales no prueban por sí mismas hechos históricos; las fechas no siempre son fechas de publicación. Verifica cada afirmación de interés en la ficha y en el documento original cuando esté disponible.
 
 ## Pruebas
 
 ```bash
 python -m unittest discover -s tests -v
 ```
-
-## Relación con los cuadernos anteriores
-
-Esta versión para producción ligera **no incluye los 21 notebooks**; se entrega deliberadamente independiente de los directorios de investigación. El catálogo y el índice se obtuvieron de la etapa 15. Las reglas de presentación de evidencia siguen el criterio de las etapas 19–21.
