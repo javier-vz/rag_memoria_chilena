@@ -63,7 +63,9 @@ def groq_key():
         return os.getenv("GROQ_API_KEY", "").strip()
 
 
-@st.cache_data(show_spinner=False, ttl=3600)
+# Las búsquedas son ligeras (34 fichas); no usar st.cache_data aquí:
+# devuelve objetos Hit que Streamlit Cloud puede rechazar al serializarlos.
+# El catálogo y MiniLM ya usan st.cache_resource, por lo que no se recargan.
 def buscar(query: str, semantica: bool, rdf: bool, cantidad: int):
     modelo = None
     if semantica:
